@@ -7,12 +7,12 @@ namespace FunctionBuilder
     {
         static void Main(string[] args)
         {
-            ReversPolishNotation RPN = new ReversPolishNotation(Console.ReadLine());
-            List<object> rpn = RPN.resultToRPN;
+            ReversPolishNotation rpn = new ReversPolishNotation(Console.ReadLine());
+            List<object> rpnList = rpn.ResultToRpn;
             Console.WriteLine("__________________________________________________________");
-            for(int i = 0; i < rpn.Count; i++)
+            for(int i = 0; i < rpnList.Count; i++)
             {
-                Console.Write(" {0} ",rpn[i]);
+                Console.Write(" {0} ",rpnList[i]);
             }
         }
     }

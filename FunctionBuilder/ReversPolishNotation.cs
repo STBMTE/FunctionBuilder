@@ -1,28 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FunctionBuilder
 {
     class ReversPolishNotation
     {
-        private Stack<Parenthessis> Parenthesses = new Stack<Parenthessis>();
-        private List<object> Reverspolishnotation = new List<object>();
-        private List<string> OperationsList = new List<string>() { "!", "ln", "log", "cos", "sin", "tg", "ctg", "arcsin", "arccos", "arctg", "arcctg", "^", "Sqrt", "+", "-", "/", "*" };
-        public List<object> resultToRPN = new List<object>();
+        private List<object> Reverspolishnotation { get; set; } = new List<object>();
+
+        private List<string> OperationsList { get; set; } = new List<string>()
+        {
+            "!", "ln", "log", "cos", "sin", "tg", "ctg", "arcsin", "arccos", "arctg", "arcctg", "^", "Sqrt", "+", "-",
+            "/", "*"
+        };
+
+        public List<object> ResultToRpn { get; set; } = new List<object>();
         private string Expression { get; set; }
 
         public ReversPolishNotation(string i)
         {
             Expression = i;
             ComplementMultiplication();
-            Console.WriteLine(Expression);
             ParsExpression();
             for (int l = 0; l < Reverspolishnotation.Count; l++)
             {
-                Console.WriteLine(Reverspolishnotation[l]);
+                Console.Write(Reverspolishnotation[l]);
             }
             GetReversPolishNotation();
 
@@ -49,19 +51,8 @@ namespace FunctionBuilder
             }
             Expression = exp;
         }
-        private bool isDigit(object x)
-        {
-            try
-            {
-                Convert.ToChar(x);
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
-        }
-        public List<object> getRPN()
+        
+        public List<object> GetRpn()
         {
             return Reverspolishnotation;
         }
@@ -70,7 +61,6 @@ namespace FunctionBuilder
         {
             List<object> parsExpression = new List<object>();
             string result = null;
-            bool flagEnd = false;
 
             for (int i = 0; i < Expression.Length; i++)
             {
@@ -102,7 +92,7 @@ namespace FunctionBuilder
                             break;
                         }
                     }
-                    parsExpression.Add(result);
+                    parsExpression.Add(Convert.ToDouble(result));
                     result = null;
                     continue;
                 }
@@ -150,7 +140,6 @@ namespace FunctionBuilder
                         parsExpression.Add(y);
                         result = null;
                     }
-                    continue;
                 }
             }
             Reverspolishnotation = parsExpression;
@@ -158,55 +147,25 @@ namespace FunctionBuilder
 
         private void ChoseOperation(object x, out Operation y)
         {
-            y = null;
-            switch (x.ToString())
+            y = x.ToString() switch
             {
-                case @"+":
-                    y = new Plus();
-                    break;
-                case @"-":
-                    y = new Minus();
-                    break;
-                case @"*":
-                    y = new Mult();
-                    break;
-                case @"/":
-                    y = new Div();
-                    break;
-                case @"\":
-                    y = new Div();
-                    break;
-                case @"log":
-                    y = new Log();
-                    break;
-                case @"ln":
-                    y = new Ln();
-                    break;
-                case @"sin":
-                    y = new Sin();
-                    break;
-                case @"cos":
-                    y = new Cos();
-                    break;
-                case @"tg":
-                    y = new Tan();
-                    break;
-                case @"^":
-                    y = new Degree();
-                    break;
-                case @"sqrt":
-                    y = new Sqrt();
-                    break;
-                case @"!":
-                    y = new Factorial();
-                    break;
-                case @"pi":
-                    y = new PI();
-                    break;
-                case @"e":
-                    y = new Exponent();
-                    break;
-            }
+                @"+" => new Plus(),
+                @"-" => new Minus(),
+                @"*" => new Mult(),
+                @"/" => new Div(),
+                @"\" => new Div(),
+                @"log" => new Log(),
+                @"ln" => new Ln(),
+                @"sin" => new Sin(),
+                @"cos" => new Cos(),
+                @"tg" => new Tan(),
+                @"^" => new Degree(),
+                @"sqrt" => new Sqrt(),
+                @"!" => new Factorial(),
+                @"pi" => new PI(),
+                @"e" => new Exponent(),
+                _ => null
+            };
         }
 
         private bool CheckLeftBracket(object obj)
@@ -218,151 +177,121 @@ namespace FunctionBuilder
             return false;
         }
 
-        private void GetReversPolishNotation()
-        {
-            Stack<object> OutputStack = new Stack<object>();
-            List<object> OutputList = new List<object>();
-            int j = Reverspolishnotation.Count;
-            for (j = 0; j < Reverspolishnotation.Count; j++)
-            {
-                object token = Reverspolishnotation[j];
-                if (token is Operation operation || token is Parenthessis parenth)
-                {
-                    if (OutputStack.Count > 0 && !CheckLeftBracket(token))
-                    {
-                        if (token is Parenthessis parenthis)
-                        {
-                            if (!parenthis.IsOpening)
-                            {
-                                object obj = OutputStack.Pop();
-                                while (!CheckLeftBracket(obj))
-                                {
-                                    OutputList.Add(obj);
-                                    obj = OutputStack.Pop();
-                                }/*
-                                OutputStack.Pop();*/
-                            }
-                        }
-                        if (OutputStack.Count > 0 && GetPrior(token) < GetPrior(OutputStack.Peek()))
-                        {
-                            OutputStack.Push(token);
-                        }
-                        else
-                        {
-                            while (OutputStack.Count > 0 && GetPrior(token) <= GetPrior(OutputStack.Peek()))
-                            {
-                                OutputList.Add(OutputStack.Pop());
-                            }
-                            OutputStack.Push(token);
-                        }
-
-                    }
-                    else
-                    {
-                        OutputStack.Push(token);
-                    }
-                }
-                else
-                {
-                    OutputList.Add(token);
-                }
-                /*object token = Reverspolishnotation[j];
-                if(token is Double number)
-                {
-                    OutputList.Add(token);
-                }
-                if(token is Operation operato)
-                {
-                    if (!operato.IsPrefix || operato.Name == "e" || operato.Name == "pi")
-                    {
-                        OutputList.Add(token);
-                    }
-                    else
-                    {
-                        OutputStack.Push(token);
-                    }
-                }
-                if(token is Parenthessis parenth)
-                {
-                    if (parenth.IsOpening)
-                    {
-                        OutputStack.Push(token);
-                    }
-                    else
-                    {
-                        while (Reverspolishnotation[j] is Parenthessis)
-                        {
-                            object token1 = Reverspolishnotation[j];
-                            if(token1 is Parenthessis pare)
-                            {
-                                if(pare.IsOpening){
-                                    break;
-                                }
-                                OutputList.Add(OutputStack.Pop());
-                            }
-                            j++;
-                        }
-                    }
-                }*/
-            }
-            if (OutputStack.Count > 0)
-            {
-                foreach (object obj in OutputStack)
-                {
-                    if(obj is Parenthessis parenthessis)
-                    {
-                        if (!parenthessis.IsOpening)
-                        {
-                            continue;
-                        }
-                    }
-                    OutputList.Add(obj);
-                }
-            }
-            resultToRPN = OutputList;
-        }
-
-        private int GetPrior(object obj)
+        private bool CheckForPrefix(object obj)
         {
             if (obj is Operation operation)
             {
-                return operation.Prior;
+                return operation.IsPrefix;
             }
-            if(obj is Parenthessis parenthessis)
-            {
-                return parenthessis.Prior;
-            }
-            return 0;
+            
+            return false;
         }
 
-        private List<object> ConvertToList(List<object> operands)
+        private void GetReversPolishNotation()
         {
-            List<object> result = new List<object>();
-            foreach (object operand in operands)
+            Stack<object> outputStack = new Stack<object>();
+            List<object> outputList = new List<object>();
+            for (int i = 0; i < Reverspolishnotation.Count; i++)
             {
-                if (operand is List<object>)
+                object token = Reverspolishnotation[i];
+                if ("xyz".Contains(Convert.ToString(token)))
                 {
-                    List<object> listOBJ = (List<object>)operand;
-                    result.AddRange(ConvertToList(listOBJ));
+                    outputList.Add(token);
                 }
-                else
+                if (token is double)
                 {
-                    result.Add(operand);
+                    outputList.Add(token);
+                }
+                if (token is Operation operation)
+                {
+                    if (token is Operation operation1)
+                    {
+                        if (!operation1.IsPrefix && !operation1.IsBinaryOperation)
+                        {
+                            outputList.Add(operation1);
+                        }
+                    }
+                }
+                if (token is Operation operation2)
+                {
+                    if (operation2.IsPrefix)
+                    {
+                        outputStack.Push(operation2);
+                    }
+                }
+                if (token is Parenthessis parenthessis)
+                {
+                    if (parenthessis.IsOpening)
+                    {
+                        outputStack.Push(parenthessis);
+                    }
+                    else
+                    {
+                        object obj = outputStack.Peek();
+                        while (!CheckLeftBracket(obj))
+                        {
+                            outputList.Add(outputStack.Pop());
+                            obj = outputStack.Peek();
+                        }
+                        if (CheckLeftBracket(outputStack.Peek()))
+                        {
+                            outputStack.Pop();
+                        }
+                    }
+                }
+
+                if (token is Operation operation3)
+                {
+                    if (operation3.IsBinaryOperation)
+                    {
+                        if (outputStack.Count != 0)
+                        {
+                            object obj = outputStack.Peek();
+                            while ((CheckForPrefix(obj) || PriorityComparison(token, outputStack.Peek()) ||
+                                   BinaryComparison(outputStack.Peek()) && PriorityEqualse(token, outputStack.Peek())) && outputStack.Count > 0)
+                            {
+                                outputList.Add(outputStack.Pop());
+                            }
+                        }
+
+                        outputStack.Push(token);
+                    }
                 }
             }
-            return result;
+
+            while (outputStack.Count > 0)
+            {
+                outputList.Add(outputStack.Pop());
+            }
+
+            ResultToRpn = outputList;
         }
 
-        private List<object> ExtractOperation(Stack<object> operand, Stack<Operation> operation)
+        private bool PriorityEqualse(object o1, object stackPeek)
         {
-            Operation op = operation.Pop();
-            object[] newOP = new object[op.CountParams + 1];
-            for (int z = op.CountParams - 1; z >= 0; z--)
+            if (o1 is Operation op && stackPeek is Operation sp)
             {
-                newOP[z] = operand.Pop();
+                return op.Prior == sp.Prior;
             }
-            newOP[op.CountParams] = op;
-            return newOP.ToList();
+            return false;
+        }
+        private bool BinaryComparison(object obj)
+        {
+            if (obj is Operation op)
+            {
+                return op.IsBinaryOperation;
+            }
+            return false;
+        }
+
+        private bool PriorityComparison(object o1, object StackPeek)
+        {
+            if (o1 is Operation o2 && StackPeek is Operation stackPeek)
+            {
+                return o2.Prior < stackPeek.Prior;
+            }
+
+            return false;
         }
     }
 }

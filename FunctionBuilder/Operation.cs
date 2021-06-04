@@ -80,7 +80,7 @@ namespace FunctionBuilder
         public override double Calculate(double[] @params) { return Math.Log(@params[0], @params[1]); }                    //params 1 = основание
         public override int Prior => 3;
         public override bool IsPrefix => true;
-        public override bool IsBinaryOperation => true;
+        public override bool IsBinaryOperation => false;
     }
 
     class Ln : Operation
@@ -189,7 +189,7 @@ namespace FunctionBuilder
         public override double Calculate(double[] @params) { return Math.Pow(@params[1], @params[0]); }
         public override int Prior => 3;
         public override bool IsPrefix => false;
-        public override bool IsBinaryOperation => false;
+        public override bool IsBinaryOperation => true;
     }
     class Sqrt : Operation
     {

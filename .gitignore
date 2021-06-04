@@ -1,0 +1,10 @@
+
+FunctionBuilder/.idea/
+
+FunctionBuilder/.vs/
+
+FunctionBuilder/bin/
+
+FunctionBuilder/obj/
+
+*.sln
